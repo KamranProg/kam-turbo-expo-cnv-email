@@ -1,0 +1,23 @@
+{
+  "name": "@kam-turbo-rn-cnv-start/backend",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "scripts": {
+    "dev": "convex dev",
+    "dev:setup": "convex dev --configure --until-success"
+  },
+  "dependencies": {
+    "@better-auth/expo": "catalog:",
+    "@convex-dev/better-auth": "catalog:",
+    "better-auth": "catalog:",
+    "convex": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@kam-turbo-rn-cnv-start/config": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "^6.0.3"
+  }
+}

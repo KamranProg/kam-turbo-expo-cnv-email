@@ -1,0 +1,3 @@
+{
+  "extends": "@kam-turbo-rn-cnv-start/config/tsconfig.base.json"
+}

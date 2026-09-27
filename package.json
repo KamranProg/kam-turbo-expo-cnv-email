@@ -1,0 +1,30 @@
+{
+  "name": "kam-turbo-rn-cnv-start",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "type": "module",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "check-types": "turbo run check-types",
+    "dev:native": "turbo run dev -F native --",
+    "dev:server": "turbo run dev -F @kam-turbo-rn-cnv-start/backend --",
+    "dev:setup": "turbo run dev:setup -F @kam-turbo-rn-cnv-start/backend --",
+    "env:generate": "varlock codegen --path ./apps/native/",
+    "postinstall": "varlock codegen --path ./apps/native/"
+  },
+  "dependencies": {
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@kam-turbo-rn-cnv-start/config": "workspace:*",
+    "@types/node": "catalog:",
+    "turbo": "^2.10.12",
+    "typescript": "^6.0.3",
+    "varlock": "catalog:"
+  },
+  "packageManager": "pnpm@10.28.2"
+}
