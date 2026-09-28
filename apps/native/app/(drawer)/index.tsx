@@ -19,7 +19,10 @@ export default function Home() {
 
   return (
     <Container>
-      <ScrollView style={styles.scrollView} contentInsetAdjustmentBehavior="never">
+      <ScrollView
+        style={styles.scrollView}
+        contentInsetAdjustmentBehavior="never"
+      >
         <View style={styles.content}>
           <Host style={styles.titleHost}>
             <ExpoUIText
@@ -35,10 +38,22 @@ export default function Home() {
           </Host>
 
           <View
-            style={[styles.statusCard, { backgroundColor: theme.card, borderColor: theme.border }]}
+            style={[
+              styles.statusCard,
+              { backgroundColor: theme.card, borderColor: theme.border },
+            ]}
           >
-            <Host style={styles.statusCardTitleHost} matchContents={{ vertical: true }}>
-              <ExpoUIText textStyle={{ color: theme.text, fontSize: 16, fontWeight: "bold" }}>
+            <Host
+              style={styles.statusCardTitleHost}
+              matchContents={{ vertical: true }}
+            >
+              <ExpoUIText
+                textStyle={{
+                  color: theme.text,
+                  fontSize: 16,
+                  fontWeight: "bold",
+                }}
+              >
                 API Status
               </ExpoUIText>
             </Host>
@@ -68,11 +83,20 @@ export default function Home() {
 
           {user ? (
             <View
-              style={[styles.userCard, { backgroundColor: theme.card, borderColor: theme.border }]}
+              style={[
+                styles.userCard,
+                { backgroundColor: theme.card, borderColor: theme.border },
+              ]}
             >
               <Host style={styles.userHeader} matchContents>
                 <Column spacing={6}>
-                  <ExpoUIText textStyle={{ color: theme.text, fontSize: 16, fontWeight: "bold" }}>
+                  <ExpoUIText
+                    textStyle={{
+                      color: theme.text,
+                      fontSize: 16,
+                      fontWeight: "bold",
+                    }}
+                  >
                     {`Welcome, ${user.name}`}
                   </ExpoUIText>
                   <ExpoUIText
@@ -119,11 +143,6 @@ const styles = StyleSheet.create({
     height: 34,
     marginBottom: 24,
   },
-  card: {
-    padding: 16,
-    marginBottom: 16,
-    borderWidth: 1,
-  },
   statusRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -145,15 +164,6 @@ const styles = StyleSheet.create({
   },
   userHeader: {
     marginBottom: 8,
-  },
-  paymentActions: {
-    marginTop: 12,
-  },
-  authHost: {
-    marginBottom: 12,
-  },
-  authActionsHost: {
-    marginTop: 4,
   },
   statusCard: {
     marginBottom: 16,

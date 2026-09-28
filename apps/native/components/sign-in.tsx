@@ -8,15 +8,22 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import z from "zod";
+import { z } from "zod";
 
 import { authClient } from "@/lib/auth-client";
 import { NAV_THEME } from "@/lib/constants";
 import { useColorScheme } from "@/lib/use-color-scheme";
 
 const signInSchema = z.object({
-  email: z.string().trim().min(1, "Email is required").email("Enter a valid email address"),
-  password: z.string().min(1, "Password is required").min(8, "Use at least 8 characters"),
+  email: z
+    .string()
+    .trim()
+    .min(1, "Email is required")
+    .email("Enter a valid email address"),
+  password: z
+    .string()
+    .min(1, "Password is required")
+    .min(8, "Use at least 8 characters"),
 });
 
 function getErrorMessage(error: unknown): string | null {
@@ -79,7 +86,12 @@ function SignIn() {
   });
 
   return (
-    <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
+    <View
+      style={[
+        styles.card,
+        { backgroundColor: theme.card, borderColor: theme.border },
+      ]}
+    >
       <Text style={[styles.title, { color: theme.text }]}>Sign In</Text>
 
       <form.Subscribe
@@ -95,9 +107,16 @@ function SignIn() {
             <>
               {formError ? (
                 <View
-                  style={[styles.errorContainer, { backgroundColor: theme.notification + "20" }]}
+                  style={[
+                    styles.errorContainer,
+                    { backgroundColor: theme.notification + "20" },
+                  ]}
                 >
-                  <Text style={[styles.errorText, { color: theme.notification }]}>{formError}</Text>
+                  <Text
+                    style={[styles.errorText, { color: theme.notification }]}
+                  >
+                    {formError}
+                  </Text>
                 </View>
               ) : null}
 

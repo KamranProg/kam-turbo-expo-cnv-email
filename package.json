@@ -14,7 +14,9 @@
     "dev:server": "turbo run dev -F @kam-turbo-rn-cnv-start/backend --",
     "dev:setup": "turbo run dev:setup -F @kam-turbo-rn-cnv-start/backend --",
     "env:generate": "varlock codegen --path ./apps/native/",
-    "postinstall": "varlock codegen --path ./apps/native/"
+    "postinstall": "varlock codegen --path ./apps/native/",
+
+    "lint": "turbo lint"
   },
   "dependencies": {
     "zod": "catalog:"
