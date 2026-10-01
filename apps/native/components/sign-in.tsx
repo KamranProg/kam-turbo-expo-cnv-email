@@ -11,7 +11,6 @@ import {
 import { z } from "zod";
 
 import { authClient } from "@/lib/auth-client";
-import { NAV_THEME } from "@/lib/constants";
 import { useColorScheme } from "@/lib/use-color-scheme";
 
 const signInSchema = z.object({
@@ -54,8 +53,7 @@ function getErrorMessage(error: unknown): string | null {
 }
 
 function SignIn() {
-  const { colorScheme } = useColorScheme();
-  const theme = colorScheme === "dark" ? NAV_THEME.dark : NAV_THEME.light;
+  const { theme } = useColorScheme();
   const [error, setError] = useState<string | null>(null);
 
   const form = useForm({
