@@ -20,6 +20,6 @@ module.exports = defineConfig([
   eslintPluginPrettierRecommended,
 
   {
-    ignores: ["dist/*"],
+    ignores: ["dist/*", "expo-env.d.ts"],
   },
 ]);
