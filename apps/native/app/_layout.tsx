@@ -14,6 +14,7 @@ import { authClient } from "@/lib/auth-client";
 import { NAV_THEME } from "@/lib/constants";
 import { useColorScheme } from "@/lib/use-color-scheme";
 import { useOnboardingStore } from "@/stores/onboarding-store";
+import { SplashScreenController } from "@/components/splash-screen-controller";
 import { ENV } from "../src/env";
 
 const LIGHT_THEME = {
@@ -59,46 +60,59 @@ function RootNavigator() {
 
   const hasHydrated = useOnboardingStore((state) => state.hasHydrated);
 
-  // Temporary placeholders; we'll connect Better Auth and Convex later.
-  const isAuthenticated = false;
+  const { data: session, isPending } = authClient.useSession();
+  const isAuthenticated = !!session;
   const hasCompletedAccountOnboarding = false;
 
-  // Wait until persisted onboarding state is restored.
-  if (!hasHydrated) {
-    return <Stack screenOptions={{ headerShown: false }} />;
-  }
+  const navigationReady = hasHydrated && !isPending;
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Protected guard={!hasCompletedProductOnboarding}>
-        <Stack.Screen name="(onboarding)" />
-      </Stack.Protected>
+    <>
+      <SplashScreenController navigationReady={navigationReady}>
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Protected guard={!navigationReady}>
+            <Stack.Screen name="loading" />
+          </Stack.Protected>
 
-      <Stack.Protected
-        guard={hasCompletedProductOnboarding && !isAuthenticated}
-      >
-        <Stack.Screen name="(auth)" />
-      </Stack.Protected>
+          <Stack.Protected
+            guard={navigationReady && !hasCompletedProductOnboarding}
+          >
+            <Stack.Screen name="(onboarding)" />
+          </Stack.Protected>
 
-      <Stack.Protected
-        guard={
-          hasCompletedProductOnboarding &&
-          isAuthenticated &&
-          !hasCompletedAccountOnboarding
-        }
-      >
-        <Stack.Screen name="(account-onboarding)" />
-      </Stack.Protected>
+          <Stack.Protected
+            guard={
+              navigationReady &&
+              hasCompletedProductOnboarding &&
+              !isAuthenticated
+            }
+          >
+            <Stack.Screen name="(auth)" />
+          </Stack.Protected>
 
-      <Stack.Protected
-        guard={
-          hasCompletedProductOnboarding &&
-          isAuthenticated &&
-          hasCompletedAccountOnboarding
-        }
-      >
-        <Stack.Screen name="(tabs)" />
-      </Stack.Protected>
-    </Stack>
+          <Stack.Protected
+            guard={
+              navigationReady &&
+              hasCompletedProductOnboarding &&
+              isAuthenticated &&
+              !hasCompletedAccountOnboarding
+            }
+          >
+            <Stack.Screen name="(account-onboarding)" />
+          </Stack.Protected>
+
+          <Stack.Protected
+            guard={
+              navigationReady &&
+              hasCompletedProductOnboarding &&
+              isAuthenticated &&
+              hasCompletedAccountOnboarding
+            }
+          >
+            <Stack.Screen name="(tabs)" />
+          </Stack.Protected>
+        </Stack>
+      </SplashScreenController>
+    </>
   );
 }
