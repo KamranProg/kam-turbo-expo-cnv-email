@@ -1,56 +1,21 @@
+// apps/native/components/sign-in.tsx
+
 import { useForm } from "@tanstack/react-form";
 import { useState } from "react";
 import {
   ActivityIndicator,
-  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
-import { z } from "zod";
 
 import { authClient } from "@/lib/auth-client";
+import { signInSchema } from "@/lib/auth-schemas";
+import { getErrorMessage } from "@/lib/form-errors";
 import { useColorScheme } from "@/lib/use-color-scheme";
 
-const signInSchema = z.object({
-  email: z
-    .string()
-    .trim()
-    .min(1, "Email is required")
-    .email("Enter a valid email address"),
-  password: z
-    .string()
-    .min(1, "Password is required")
-    .min(8, "Use at least 8 characters"),
-});
-
-function getErrorMessage(error: unknown): string | null {
-  if (!error) return null;
-
-  if (typeof error === "string") {
-    return error;
-  }
-
-  if (Array.isArray(error)) {
-    for (const issue of error) {
-      const message = getErrorMessage(issue);
-      if (message) {
-        return message;
-      }
-    }
-    return null;
-  }
-
-  if (typeof error === "object" && error !== null) {
-    const maybeError = error as { message?: unknown };
-    if (typeof maybeError.message === "string") {
-      return maybeError.message;
-    }
-  }
-
-  return null;
-}
+import { authFormStyles as styles } from "@/components/styles/auth-form.styles";
 
 function SignIn() {
   const { theme } = useColorScheme();
@@ -196,40 +161,5 @@ function SignIn() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    marginTop: 16,
-    padding: 16,
-    borderWidth: 1,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 12,
-  },
-  errorContainer: {
-    marginBottom: 12,
-    padding: 8,
-  },
-  errorText: {
-    fontSize: 14,
-  },
-  input: {
-    borderWidth: 1,
-    padding: 12,
-    fontSize: 16,
-    marginBottom: 12,
-  },
-  button: {
-    padding: 12,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  buttonText: {
-    color: "#ffffff",
-    fontSize: 16,
-  },
-});
 
 export { SignIn };

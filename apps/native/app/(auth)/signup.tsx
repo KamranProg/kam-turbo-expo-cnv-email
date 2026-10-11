@@ -1,14 +1,16 @@
 import { Link } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+
+import { SignUp } from "@/components/sign-up";
 
 export default function SignupScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Sign up</Text>
+      <SignUp />
 
-      <Text>Signup form will go here.</Text>
-
-      <Link href="/login">Already have an account? Log in</Link>
+      <Link href="/login" style={styles.link}>
+        Already have an account? Log in
+      </Link>
     </View>
   );
 }
@@ -16,13 +18,11 @@ export default function SignupScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
     justifyContent: "center",
-    gap: 16,
     padding: 24,
   },
-  title: {
-    fontSize: 28,
-    fontWeight: "600",
+  link: {
+    marginTop: 24,
+    textAlign: "center",
   },
 });
