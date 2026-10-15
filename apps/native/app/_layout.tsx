@@ -61,60 +61,80 @@ function RootNavigator() {
 
   const hasHydrated = useOnboardingStore((state) => state.hasHydrated);
 
-  const { isAuthenticated, isLoading: isConvexAuthLoading } = useConvexAuth();
+  const {
+    data: session,
+    isPending: isSessionPending,
+    error: sessionError,
+  } = authClient.useSession();
+
+  const {
+    isAuthenticated: isConvexAuthenticated,
+    isLoading: isConvexAuthLoading,
+  } = useConvexAuth();
+
+  const hasSession = !!session;
 
   const profile = useQuery(
     api.userProfiles.getCurrent,
-    isAuthenticated ? {} : "skip",
+    hasSession && isConvexAuthenticated ? {} : "skip",
   );
 
-  const isProfileLoading = isAuthenticated && profile === undefined;
+  const isProfileLoading =
+    hasSession && isConvexAuthenticated && profile === undefined;
 
   const hasCompletedAccountOnboarding =
     profile?.accountOnboardingCompleted === true;
 
-  const navigationReady =
-    hasHydrated && !isConvexAuthLoading && !isProfileLoading;
+  // Product onboarding is shown once per installation.
+  const needsProductOnboarding = hasHydrated && !hasCompletedProductOnboarding;
+
+  // Keep Login accessible when both systems report unauthenticated,
+  // even during a temporary authentication loading state.
+  const isSignedOut =
+    hasHydrated &&
+    hasCompletedProductOnboarding &&
+    !hasSession &&
+    !isConvexAuthenticated;
+
+  // Authenticated users must wait until Convex and their profile are ready.
+  const isSignedInReady =
+    hasHydrated &&
+    hasCompletedProductOnboarding &&
+    hasSession &&
+    isConvexAuthenticated &&
+    !isConvexAuthLoading &&
+    !isProfileLoading &&
+    !isSessionPending &&
+    !sessionError;
+
+  const showLoading =
+    !needsProductOnboarding && !isSignedOut && !isSignedInReady;
+
+  const navigationReady = !showLoading;
 
   return (
     <SplashScreenController navigationReady={navigationReady}>
       <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Protected guard={!navigationReady}>
+        <Stack.Protected guard={showLoading}>
           <Stack.Screen name="loading" />
         </Stack.Protected>
 
-        <Stack.Protected
-          guard={navigationReady && !hasCompletedProductOnboarding}
-        >
+        <Stack.Protected guard={needsProductOnboarding}>
           <Stack.Screen name="(onboarding)" />
         </Stack.Protected>
 
-        <Stack.Protected
-          guard={
-            navigationReady && hasCompletedProductOnboarding && !isAuthenticated
-          }
-        >
+        <Stack.Protected guard={isSignedOut}>
           <Stack.Screen name="(auth)" />
         </Stack.Protected>
 
         <Stack.Protected
-          guard={
-            navigationReady &&
-            hasCompletedProductOnboarding &&
-            isAuthenticated &&
-            !hasCompletedAccountOnboarding
-          }
+          guard={isSignedInReady && !hasCompletedAccountOnboarding}
         >
           <Stack.Screen name="(account-onboarding)" />
         </Stack.Protected>
 
         <Stack.Protected
-          guard={
-            navigationReady &&
-            hasCompletedProductOnboarding &&
-            isAuthenticated &&
-            hasCompletedAccountOnboarding
-          }
+          guard={isSignedInReady && hasCompletedAccountOnboarding}
         >
           <Stack.Screen name="(tabs)" />
         </Stack.Protected>
