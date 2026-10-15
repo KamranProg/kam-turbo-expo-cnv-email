@@ -1,5 +1,5 @@
 import { ConvexBetterAuthProvider } from "@convex-dev/better-auth/react";
-import { ConvexReactClient } from "convex/react";
+import { ConvexReactClient, useConvexAuth, useQuery } from "convex/react";
 import { Stack } from "expo-router";
 import {
   DarkTheme,
@@ -15,7 +15,8 @@ import { NAV_THEME } from "@/lib/constants";
 import { useColorScheme } from "@/lib/use-color-scheme";
 import { useOnboardingStore } from "@/stores/onboarding-store";
 import { SplashScreenController } from "@/components/splash-screen-controller";
-import { ENV } from "../src/env";
+import { ENV } from "@/src/env";
+import { api } from "@kam-turbo-rn-cnv-start/backend/convex/_generated/api";
 
 const LIGHT_THEME = {
   ...DefaultTheme,
@@ -60,59 +61,64 @@ function RootNavigator() {
 
   const hasHydrated = useOnboardingStore((state) => state.hasHydrated);
 
-  const { data: session, isPending } = authClient.useSession();
-  const isAuthenticated = !!session;
-  const hasCompletedAccountOnboarding = false;
+  const { isAuthenticated, isLoading: isConvexAuthLoading } = useConvexAuth();
 
-  const navigationReady = hasHydrated && !isPending;
+  const profile = useQuery(
+    api.userProfiles.getCurrent,
+    isAuthenticated ? {} : "skip",
+  );
+
+  const isProfileLoading = isAuthenticated && profile === undefined;
+
+  const hasCompletedAccountOnboarding =
+    profile?.accountOnboardingCompleted === true;
+
+  const navigationReady =
+    hasHydrated && !isConvexAuthLoading && !isProfileLoading;
 
   return (
-    <>
-      <SplashScreenController navigationReady={navigationReady}>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Protected guard={!navigationReady}>
-            <Stack.Screen name="loading" />
-          </Stack.Protected>
+    <SplashScreenController navigationReady={navigationReady}>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Protected guard={!navigationReady}>
+          <Stack.Screen name="loading" />
+        </Stack.Protected>
 
-          <Stack.Protected
-            guard={navigationReady && !hasCompletedProductOnboarding}
-          >
-            <Stack.Screen name="(onboarding)" />
-          </Stack.Protected>
+        <Stack.Protected
+          guard={navigationReady && !hasCompletedProductOnboarding}
+        >
+          <Stack.Screen name="(onboarding)" />
+        </Stack.Protected>
 
-          <Stack.Protected
-            guard={
-              navigationReady &&
-              hasCompletedProductOnboarding &&
-              !isAuthenticated
-            }
-          >
-            <Stack.Screen name="(auth)" />
-          </Stack.Protected>
+        <Stack.Protected
+          guard={
+            navigationReady && hasCompletedProductOnboarding && !isAuthenticated
+          }
+        >
+          <Stack.Screen name="(auth)" />
+        </Stack.Protected>
 
-          <Stack.Protected
-            guard={
-              navigationReady &&
-              hasCompletedProductOnboarding &&
-              isAuthenticated &&
-              !hasCompletedAccountOnboarding
-            }
-          >
-            <Stack.Screen name="(account-onboarding)" />
-          </Stack.Protected>
+        <Stack.Protected
+          guard={
+            navigationReady &&
+            hasCompletedProductOnboarding &&
+            isAuthenticated &&
+            !hasCompletedAccountOnboarding
+          }
+        >
+          <Stack.Screen name="(account-onboarding)" />
+        </Stack.Protected>
 
-          <Stack.Protected
-            guard={
-              navigationReady &&
-              hasCompletedProductOnboarding &&
-              isAuthenticated &&
-              hasCompletedAccountOnboarding
-            }
-          >
-            <Stack.Screen name="(tabs)" />
-          </Stack.Protected>
-        </Stack>
-      </SplashScreenController>
-    </>
+        <Stack.Protected
+          guard={
+            navigationReady &&
+            hasCompletedProductOnboarding &&
+            isAuthenticated &&
+            hasCompletedAccountOnboarding
+          }
+        >
+          <Stack.Screen name="(tabs)" />
+        </Stack.Protected>
+      </Stack>
+    </SplashScreenController>
   );
 }
